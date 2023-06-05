@@ -9,6 +9,11 @@ import {
   Query,
   UseInterceptors,
   UploadedFiles,
+  OnModuleInit,
+  OnApplicationBootstrap,
+  OnModuleDestroy,
+  BeforeApplicationShutdown,
+  OnApplicationShutdown,
 } from '@nestjs/common';
 import { PersonService } from './person.service';
 import { CreatePersonDto } from './dto/create-person.dto';
@@ -16,9 +21,31 @@ import { CreatePersonDto } from './dto/create-person.dto';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
 
 @Controller('api/person')
-export class PersonController {
+export class PersonController
+  implements
+    OnModuleInit,
+    OnApplicationBootstrap,
+    OnModuleDestroy,
+    BeforeApplicationShutdown,
+    OnApplicationShutdown
+{
   constructor(private readonly personService: PersonService) {}
 
+  onModuleInit() {
+    console.log('onPersonControllerModuleInit');
+  }
+  onApplicationBootstrap() {
+    console.log('onPersonControllerApplicationBootstrap');
+  }
+  onApplicationShutdown(signal?: string) {
+    console.log('PersonController - onApplicationShutdown', signal);
+  }
+  onModuleDestroy() {
+    console.log('onModuleDestroy - PersonController');
+  }
+  beforeApplicationShutdown(signal?: string) {
+    console.log('PersonController - beforeApplicationShutdown', signal);
+  }
   //HTTP数据传输方式 form urlencoded /  json
   @Post()
   create(@Body() createPersonDto: CreatePersonDto) {
