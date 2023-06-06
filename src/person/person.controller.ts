@@ -14,11 +14,21 @@ import {
   OnModuleDestroy,
   BeforeApplicationShutdown,
   OnApplicationShutdown,
+  UseFilters,
+  HttpException,
+  HttpStatus,
+  UseGuards,
+  UsePipes,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { PersonService } from './person.service';
 import { CreatePersonDto } from './dto/create-person.dto';
 // import { UpdatePersonDto } from './dto/update-person.dto';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
+import { PersonFilter } from './person.filter';
+import { PersonGuard } from './person.guard';
+import { PersonInterceptor } from './person.interceptor';
+import { ValidationPipe } from './person.pipe';
 
 @Controller('api/person')
 export class PersonController
@@ -66,10 +76,16 @@ export class PersonController
     return this.personService.create(createPersonDto);
   }
 
-  // @Get()
-  // findAll() {
-  //   return this.personService.findAll();
-  // }
+  @Get()
+  @UseFilters(PersonFilter)
+  @UseGuards(PersonGuard)
+  @UseInterceptors(PersonInterceptor)
+  @UsePipes(ValidationPipe)
+  findAll() {
+    console.log('get findAll');
+    throw new HttpException('XXX', HttpStatus.BAD_REQUEST);
+    return this.personService.findAll();
+  }
 
   // HTTP数据传输方式：query
   @Get('find')
@@ -79,8 +95,10 @@ export class PersonController
 
   // HTTP数据传输方式：urlParams
   @Get(':id')
-  urlParam(@Param('id') id: string) {
+  urlParam(@Param('id', ParseIntPipe) id: string) {
     // return `received: id=${id}`;
+    console.log(typeof id, id);
+
     return this.personService.findOne(+id);
   }
   // findOne(@Param('id') id: string) {

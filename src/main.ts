@@ -5,10 +5,10 @@ import { join } from 'path';
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.useStaticAssets(join(__dirname, '..', 'public'), { prefix: '/static' });
-  await app.listen(3000);
+  await app.listen(4000);
 
-  setTimeout(() => {
-    app.close();
-  }, 3000);
+  // setTimeout(() => {
+  //   app.close();
+  // }, 3000);
 }
 bootstrap();
