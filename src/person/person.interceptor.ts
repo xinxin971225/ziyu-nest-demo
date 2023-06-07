@@ -12,7 +12,7 @@ export class PersonInterceptor implements NestInterceptor {
     context: ExecutionContext,
     next: CallHandler<any>,
   ): Observable<any> | Promise<Observable<any>> {
-    console.log('...before', context);
+    console.log('...before');
 
     const now = Date.now();
     return next.handle().pipe(
